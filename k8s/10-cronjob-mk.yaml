@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mk-rss
+  namespace: news
+spec:
+  schedule: "5 0 * * *"          # 매일 09:05 KST
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: rss-bot
+          nodeSelector:
+            kubernetes.io/hostname: news-tfn    # 매일경제 -> taxfin node
+          restartPolicy: OnFailure
+          containers:
+            - name: collector
+              image: docker.io/r0l3er7/news-collector:latest
+              args: ["mk_economy"]
+              env:
+                - name: GITHUB_REPO
+                  value: "pinksour/kubepresso"
+                - name: GITHUB_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: github-pat
+                      key: token
+
