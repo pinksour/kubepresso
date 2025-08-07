@@ -4,19 +4,19 @@ metadata:
   name: hk-rss
   namespace: news
 spec:
-  schedule: "5 0 * * *"          # 매일 09:05 KST
+  schedule: "15 0 * * *"          # 매일 09:05 KST
   jobTemplate:
     spec:
       template:
         spec:
           serviceAccountName: rss-bot
           nodeSelector:
-            kubernetes.io/hostname: news-dsc    # 한국경제 -> datasec node
+            kubernetes.io/hostname: datasec    # 한국경제 -> datasec node  # 라벨 매칭
           restartPolicy: OnFailure
           containers:
             - name: collector
               image: docker.io/r0l3er7/news-collector:latest
-              args: ["hankyung_it"]
+              args: ["--target", "hk_it"]
               env:
                 - name: GITHUB_REPO
                   value: "pinksour/kubepresso"

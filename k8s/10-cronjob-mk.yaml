@@ -11,12 +11,12 @@ spec:
         spec:
           serviceAccountName: rss-bot
           nodeSelector:
-            kubernetes.io/hostname: news-tfn    # 매일경제 -> taxfin node
+            kubernetes.io/hostname: taxfin    # 매일경제 -> taxfin node  # 라벨 매칭
           restartPolicy: OnFailure
           containers:
             - name: collector
               image: docker.io/r0l3er7/news-collector:latest
-              args: ["mk_economy"]
+              args: ["--target", "mk_economy"]
               env:
                 - name: GITHUB_REPO
                   value: "pinksour/kubepresso"

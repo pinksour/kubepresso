@@ -1,20 +1,33 @@
-import requests, xml.etree.ElementTree as ET, datetime as dt
+"""RSS 파싱 util - 예외처리 포함"""
+import requests, feedparser, datetime as dt
 
-TARGET_COUNT = 3
+MAX_ITEMS = 3
+TIMEOUT = 10	# seconds
 
-def fetch_rss(url: str) -> list[dict]:
-    """RSS → [{title, link, pub_date}] 최신 TARGET_COUNT개 반환"""
-    r = requests.get(url, timeout=10)
-    r.raise_for_status()
-    root = ET.fromstring(r.content)
-    items = root.findall("./channel/item")[:TARGET_COUNT]
-    out = []
-    for it in items:
-        out.append({
-            "title": it.findtext("title"),
-            "link":  it.findtext("link"),
-            "pub_date": it.findtext("pubDate"),
-            "fetched_at": dt.datetime.utcnow().isoformat()
-        })
-    return out
+class RSSFetchError(RuntimeError):
+	...
 
+def fetch_rss(url: str, limit: int = MAX_ITEMS) -> list[dict]:
+	try:
+		resp = requests.get(url, timeout=TIMEOUT)
+		resp.raise_for_status()
+	except requests.RequestException as e:
+		raise RSSFetchError(f"HTTP 실패: {e}") from e
+
+	feed = feedparser.parse(resp.content)
+	if feed.bozo:
+		raise RSSFetchError(f"RSS 파싱 오류: {feed.bozo_exception}")
+
+	items = []
+	for entry in feed.entries[:limit]:
+		items.append(
+			{
+				"title":      getattr(entry, "title", "").strip(),
+				"link":       getattr(entry, "link", ""),
+				"pub_date":   getattr(entry, "published", ""),
+				"fetched_at": dt.datetime.utcnow().isoformat() + "Z",
+			}
+		)
+	if not items:
+		raise RSSFetchError("항목 0개 반환 – 피드 URL 확인 필요")
+	return items

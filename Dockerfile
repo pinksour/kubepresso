@@ -8,11 +8,11 @@ WORKDIR /app
 COPY requirements.txt .
 
 # 필요한 패키지 설치 (필요 시 requirements.txt로 대체 가능)
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # source
 COPY src/ ./src/
-ENV PYTHONPATH="/app/src"
+ENV PYTHONPATH=/app/src
 
 # 기본 실행 명령어 (인자는 Kaniko 쪽에서 지정하므로 여기서는 생략하거나 디폴트 설정만)
-ENTRYPOINT ["python3", "src/news_collector.py"]
+ENTRYPOINT ["python3", "-m", "collector.rss_collector"]

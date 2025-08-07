@@ -1,2 +1,3 @@
 requests
+feedparser	# RSS 파싱 표준 라이브러리
 PyGithub

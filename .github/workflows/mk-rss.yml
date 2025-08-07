@@ -1,0 +1,17 @@
+name: mk-rss-daily
+on:
+  schedule:
+    - cron: '5 0 * * *'      # 09:05 KST
+  workflow_dispatch:
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -r requirements.txt
+      - run: python src/collector/rss_collector.py --target mk_economy --limit 3 > mk.json
+      - uses: actions/upload-artifact@v4
+        with: { name: mk-economy, path: mk.json }
