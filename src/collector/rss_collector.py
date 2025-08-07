@@ -15,7 +15,7 @@ from github import Github
 
 FEEDS = {
     # 매일경제 경제 RSS 주소
-    "mk_economy": "https://www.mk.co.kr/rss/30100041/",
+    "mk_economy": "https://www.mk.co.kr/rss/50000001/",
 
     # 한국경제 IT RSS 주소
     "hk_it":      "https://www.hankyung.com/feed/it",

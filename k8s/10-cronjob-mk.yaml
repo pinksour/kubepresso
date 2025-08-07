@@ -11,7 +11,7 @@ spec:
         spec:
           serviceAccountName: rss-bot
           nodeSelector:
-            kubernetes.io/hostname: taxfin    # 매일경제 -> taxfin node  # 라벨 매칭
+            role: economy    # 매일경제 -> economy node  # 라벨 매칭
           restartPolicy: OnFailure
           containers:
             - name: collector

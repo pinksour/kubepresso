@@ -1,7 +1,7 @@
 """RSS 파싱 util - 예외처리 포함"""
 import requests, feedparser, datetime as dt
 
-MAX_ITEMS = 3
+MAX_ITEMS = 5
 TIMEOUT = 10	# seconds
 
 class RSSFetchError(RuntimeError):
