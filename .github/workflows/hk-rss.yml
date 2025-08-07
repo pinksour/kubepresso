@@ -1,4 +1,10 @@
 name: hk-rss-daily
+
+# 기본적으로 GITHUB_TOKEN은 "읽기(read)"만 허용된 상태라, 쓰기(write)권한을 수동으로 열어줘야...
+# 아래처럼 워크플로우 최상단에 permissions 블록을 추가하고, contents: write로 설정
+permissions:
+  contents: write  # 자동 커밋 활성화
+
 on:
   schedule:
     - cron: '15 0 * * *'      # 09:15 KST
@@ -8,14 +14,19 @@ jobs:
   collect:
     runs-on: ubuntu-latest
     env:
-      GITHUB_REPO: pinksour/kubepresso  # MY GitHub Repo
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automatic token provisioning
+      GITHUB_REPO: pinksour/kubepresso  # ↪ 내 GitHub 저장소 경로
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # ↪ 자동발급 토큰
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with: { python-version: '3.12' }
+
       - run: pip install -r requirements.txt
+
       - name: Collect HK RSS and push to GitHub
-      - run: python src/collector/rss_collector.py --target hk_it --limit 5 > hk.json
+      - run: python src/collector/rss_collector.py --target hk_it --limit 5
+        # ↪ 여기서 스크립트가 돌면서 push_to_github()가 자동 실행됩니다.
+
       - uses: actions/upload-artifact@v4
-        with: { name: hk-it, path: data/$(data +%F)/hk.json }
+        with: { name: hk-it, path: data/$(data +%F)/hk_it.json }
