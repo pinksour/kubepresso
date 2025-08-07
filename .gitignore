@@ -207,3 +207,4 @@ marimo/_lsp/
 __marimo__/
 k8s/01-secret-github.yaml
 k8s/01-secret-github.yaml
+k8s/01-secret-github.yaml
