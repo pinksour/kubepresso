@@ -24,7 +24,7 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: Collect MK RSS and push to GitHub
-      - run: python src/collector/rss_collector.py --target mk_economy --limit 5
+        run: python src/collector/rss_collector.py --target mk_economy --limit 5
 
       - uses: actions/upload-artifact@v4
         with:
