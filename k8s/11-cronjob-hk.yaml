@@ -4,7 +4,7 @@ metadata:
   name: hk-rss
   namespace: news
 spec:
-  schedule: "15 0 * * *"          # 매일 09:05 KST
+  schedule: "15 0 * * *"          # 매일 09:15 KST
   jobTemplate:
     spec:
       template:

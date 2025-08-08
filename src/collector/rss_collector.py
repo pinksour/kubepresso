@@ -8,7 +8,10 @@ GITHUB_REPO       user/repo           (옵션) 결과를 push 할 레포
 GITHUB_TOKEN      <PAT>               위 레포 push 권한 토큰
 """
 
-import os, json, pathlib, datetime as dt, argparse, sys
+import sys, pathlib
+sys.path.insert(0, str(pathlib.Path(__file__).parents[1]))
+
+import os, json, datetime as dt, argparse
 from utils.rss import fetch_rss, RSSFetchError
 # PyGithub
 from github import Github
