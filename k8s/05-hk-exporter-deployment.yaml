@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hk-rss-exporter
+  namespace: news
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hk-rss-exporter
+  template:
+    metadata:
+      labels:
+        app: hk-rss-exporter
+    spec:
+      containers:
+        - name: rss-exporter
+          image: r0l3er7/news-collector:latest
+          env:
+            - name: TARGET
+              value: "hk_it"
+          ports:
+            - containerPort: 8000

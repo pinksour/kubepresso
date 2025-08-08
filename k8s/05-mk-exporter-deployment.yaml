@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mk-rss-exporter
+  namespace: news
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mk-rss-exporter
+  template:
+    metadata:
+      labels:
+        app: mk-rss-exporter
+    spec:
+      containers:
+        - name: rss-exporter
+          image: r0l3er7/news-collector:latest
+          env:
+            - name: TARGET
+              value: "mk_economy"
+          ports:
+            - containerPort: 8000

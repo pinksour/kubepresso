@@ -1,0 +1,15 @@
+# Prometheus 접근용 Service
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: news
+spec:
+  type: NodePort
+  ports:
+    - port: 9090
+      targetPort: 9090
+      nodePort: 30090
+  selector:
+    app: prometheus
