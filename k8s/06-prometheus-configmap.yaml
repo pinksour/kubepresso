@@ -13,10 +13,10 @@ data:
       scrape_interval: 15s
 
     scrape_configs:
-      - job_name: 'mk-rss-exporter'
+      - job_name: 'mk-economy-feed'
         static_configs:
-          - targets: ['mk-rss-exporter.feed:8000']
+          - targets: ['10.100.1.33:30080']
 
-      - job_name: 'hk-rss-exporter'
+      - job_name: 'hk-it-feed'
         static_configs:
-          - targets: ['hk-rss-exporter.feed:8000']
+          - targets: ['10.100.1.81:30081']
