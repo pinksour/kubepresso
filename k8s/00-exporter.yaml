@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rss-exporter
+  namespace: news
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rss-exporter
+  template:
+    metadata:
+      labels:
+        app: rss-exporter
+    spec:
+      containers:
+        - name: rss-exporter
+          image: docker.io/r0l3er7/rss-exporter:latest
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: data-vol
+              mountPath: /app/data
+      volumes:
+        - name: data-vol
+          

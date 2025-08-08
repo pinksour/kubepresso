@@ -16,14 +16,22 @@ from utils.rss import fetch_rss, RSSFetchError
 # PyGithub
 from github import Github
 
+import requests
+
+# RSS Feed 목록 정의
 FEEDS = {
-    # 매일경제 경제 RSS 주소
+    # 매일경제 이코노미 RSS 주소
     "mk_economy": "https://www.mk.co.kr/rss/50000001/",
 
     # 한국경제 IT RSS 주소
     "hk_it":      "https://www.hankyung.com/feed/it",
 }
 
+# GitHub에 JSON 파일 업로드
+# 정의: PyGithub를 통해 대상 리포지토리에 RSS 데이터를 커밋
+# 이유: 수집된 데이터를 버전 관리 및 외부 공유 가능하게 하기 위함
+# 확장성: branch, PR 생성 등 GitHub 연동 다양화 가능
+# 대체제: git CLI, GitLab API 등
 def push_to_github(repo_full: str, dst_path: str, data: list[dict]):
     gh = Github(os.environ["GITHUB_TOKEN"])
     repo = gh.get_repo(repo_full)
@@ -37,6 +45,28 @@ def push_to_github(repo_full: str, dst_path: str, data: list[dict]):
     except Exception:
         repo.create_file(dst_path, msg, body, branch="main")
 
+# 기사 수 계산이 끝난 후, exporter로 전송
+# 정의: 수집된 기사 수를 Prometheus Exporter로 전송 (POST)
+# 이유: Exporter가 메모리 기반 메트릭을 제공하고, Prometheus가 이를 스크랩하기 위함
+# 확장성: 성공/실패 로그 수집, 실패 시 재시도 등 로직 강화 기능
+# 대체제: Pushgateway 사용도 가능하지만, 이 방식이 더 실무와 적합
+def push_rss_exporter(target, count):
+	try:
+		response = requests.post(
+			"http://scrap.rss.feed:8000/report",
+			json={"target": target, "count": count},
+			timeout=5
+		)
+
+		print(f"[Exporter] Response: { response.status_code } - { response.text }")
+
+	except Exception as e:
+		print(f"[Exporter] Failed to push: {e}")
+
+# 메인 실행 로직
+# 정의: parameter로 수집 대상을 받아서 RSS를 수집, 파일 저장, GitHub 업로드, Exporter 전송까지 실행
+# 이유: 수동 실행 또는 GitHub Actions, CronJob 등에서 호출되도록 하기 위함
+# 확장성: 환경변수 기반 설정, 로그 기록, 기타 알림 기능 추가 가능
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--target", default=os.getenv("TARGET"))
