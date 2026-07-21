@@ -1,4 +1,4 @@
-"""RSS 파싱 util - 예외처리 포함"""
+"""RSS pharsing util - 예외처리 포함"""
 import requests, feedparser, datetime as dt
 
 MAX_ITEMS = 5
@@ -7,16 +7,35 @@ TIMEOUT = 10	# seconds
 class RSSFetchError(RuntimeError):
 	...
 
+RSS_HEADERS = {
+	"User-Agent": (
+		"kubepresso-rss/1.0"
+		"(+https://github.com/pinksour/kubepresso)"
+	)
+}
+
 def fetch_rss(url: str, limit: int = MAX_ITEMS) -> list[dict]:
 	try:
-		resp = requests.get(url, timeout=TIMEOUT)
+		resp = requests.get(
+			url,
+			headers=RSS_HEADERS,
+			timeout=TIMEOUT,
+		)
+
+		if resp.headers.get("cf-mitigated") == "challenge":
+			ray = resp.headers.get("cf-ray", "unknown")
+			raise RSSFetchError(
+				f"Cloudflare challenge 발생: status={resp.status_code}, cf-ray={ray}"
+			)
+			
 		resp.raise_for_status()
+		
 	except requests.RequestException as e:
-		raise RSSFetchError(f"HTTP 실패: {e}") from e
+		raise RSSFetchError(f"HTTP failed: {e}") from e
 
 	feed = feedparser.parse(resp.content)
 	if feed.bozo:
-		raise RSSFetchError(f"RSS 파싱 오류: {feed.bozo_exception}")
+		raise RSSFetchError(f"RSS Pharsing Error: {feed.bozo_exception}")
 
 	items = []
 	for entry in feed.entries[:limit]:
