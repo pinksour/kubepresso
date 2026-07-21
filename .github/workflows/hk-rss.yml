@@ -29,4 +29,4 @@ jobs:
         # ↪ 여기서 스크립트가 돌면서 push_to_github()가 자동 실행됩니다.
 
       - uses: actions/upload-artifact@v6
-        with: { name: hk-it, path: date/$(date +%F)/hk_it.json }
+        with: { name: hk-it, path: data/$(data +%F)/hk_it.json }
