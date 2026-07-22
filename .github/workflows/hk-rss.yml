@@ -30,7 +30,7 @@ jobs:
 
       - name: Set artifact path
         id: artifact
-        run: echo "ARTIFACT_PATH=data/$(date +%F)/hk_it.json" >> "$GITHUB_OUTPUT"
+        run: echo "path=data/$(date +%F)/hk_it.json" >> "$GITHUB_OUTPUT"
         
       - name: Upload HK artifact
         uses: actions/upload-artifact@v6
