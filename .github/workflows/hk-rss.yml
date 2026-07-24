@@ -7,7 +7,7 @@ permissions:
 
 on:
   schedule:
-    - cron: '15 0 * * *'      # 09:15 KST
+    - cron: '0 9 * * 6'      # Runs at 09:00 KST, only on Saturday
   workflow_dispatch:
 
 jobs:
